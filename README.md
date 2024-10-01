@@ -1,6 +1,7 @@
 # React_native_lab023
 
 Product detail and navigate choose color
-![alt text](image.png)
-![alt text](image-1.png)
-![alt text](image-2.png)
+
+![product-detail](./assets/screenshots/product_detail.png)
+![choose-color](./assets/screenshots/Choose_color.png)
+![After_choose-color](./assets/screenshots/After_choose-color.png)
