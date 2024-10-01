@@ -1,32 +1,56 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { NavigationProp, RouteProp } from "@react-navigation/native";
+import { useState } from "react";
+import {
+  Image,
+  ImageRequireSource,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import RouteParams from "../../model/type";
 import Rating from "../Rating";
 
-export default function ProductDetail() {
+type Home = {
+  route: RouteProp<RouteParams, "Home">;
+  navigation: NavigationProp<any>;
+};
+const ProductDetail: React.FC<Home> = ({ route, navigation }) => {
+  const { phone } = route.params;
+  const [img, setImg] = useState<ImageRequireSource>(phone.colors[0].image);
+  const [imgName, setImgName] = useState(phone.colors[0].name);
+  const hanldeChooseColor = (color: ImageRequireSource, name: string) => {
+    setImg((prevImg) => color);
+    setImgName((prevName) => name);
+  };
   return (
     <View style={styles.Container}>
-      <View style={{ width: 300, height: 360, alignSelf: "center" }}>
+      <View
+        style={{ width: 300, height: 360, alignSelf: "center", marginTop: 8 }}
+      >
         <Image
-          source={require("../../assets/images/vs_blue.png")}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          source={img}
+          style={{ width: "100%", height: "100%" }}
+          resizeMode="contain"
         />
       </View>
       <View style={{}}>
-        <Text style={styles.text}>
-          Điện Thoại Vsmart Joy 3 - Hàng chính hãng
-        </Text>
+        <Text style={styles.text}>{phone.name}</Text>
       </View>
       <View
         style={{ flexDirection: "row", alignItems: "center", marginTop: 9 }}
       >
-        <Rating rating={5} />
+        <Rating rating={phone.rating} />
         <Text style={[styles.text, { marginLeft: 23 }]}>
-          (Xem 828 đánh giá)
+          (Xem {phone.totalRating} đánh giá)
         </Text>
       </View>
       <View
         style={{ flexDirection: "row", alignItems: "center", marginTop: 13 }}
       >
-        <Text style={[styles.cost, {}]}>1.790.000 đ</Text>
+        <Text style={[styles.cost, {}]}>
+          {phone.discountPrice.toLocaleString()} đ
+        </Text>
         <View
           style={{
             position: "relative",
@@ -34,7 +58,7 @@ export default function ProductDetail() {
           }}
         >
           <Text style={[styles.text, { marginLeft: 44, color: "#00000094" }]}>
-            1.790.000 đ
+            {phone.price.toLocaleString()} đ
           </Text>
           <View style={styles.strikeThrough} />
         </View>
@@ -50,10 +74,21 @@ export default function ProductDetail() {
           style={{ width: 20, height: 20, objectFit: "cover", marginLeft: 8 }}
         />
       </View>
-      <View>
-        <TouchableOpacity style={[styles.btn, { position: "relative" }]}>
+      <View style={{ marginTop: 15 }}>
+        <TouchableOpacity
+          style={[styles.btn, { position: "relative" }]}
+          onPress={() =>
+            navigation.navigate("ChooseColor", {
+              product: phone.name,
+              name: imgName,
+              imgColor: img,
+              colors: phone.colors,
+              handleChooseColor: hanldeChooseColor,
+            })
+          }
+        >
           <Text style={[styles.text, { paddingVertical: 8 }]}>
-            4 MÀU-CHỌN MÀU
+            {phone.colors.length} MÀU-CHỌN MÀU
           </Text>
           <Image
             source={require("../../assets/images/arrow.png")}
@@ -61,13 +96,31 @@ export default function ProductDetail() {
           />
         </TouchableOpacity>
       </View>
+      <View style={{ marginTop: 65 }}>
+        <TouchableOpacity
+          style={[
+            styles.btn,
+            { backgroundColor: "#EE0A0A", borderColor: "#CA1536" },
+          ]}
+        >
+          <Text
+            style={[
+              styles.text,
+              { paddingVertical: 9, fontSize: 20, color: "#F9F2F2" },
+            ]}
+          >
+            CHỌN MUA
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
-}
+};
 const styles = StyleSheet.create({
   Container: {
     flex: 1,
     width: "100%",
+    justifyContent: "space-around",
     paddingLeft: 18,
     paddingRight: 10,
     paddingBottom: 13,
@@ -98,8 +151,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: "row",
     borderRadius: 10,
-    marginTop: 16,
     justifyContent: "center",
     alignItems: "center",
   },
 });
+export default ProductDetail;
